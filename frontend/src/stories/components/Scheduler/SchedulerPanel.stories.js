@@ -1,6 +1,6 @@
 import React from 'react';
 import SchedulerPanel from "main/components/Scheduler/SchedulerPanel";
-// import { riderApplicationFixtures } from 'fixtures/riderApplicationFixtures';
+import { scheduleEventsFixtures } from 'fixtures/scheduleEventsFixtures';
 
 
 export default {
@@ -16,3 +16,15 @@ const Template = (args) => {
 
 
 export const Default = Template.bind({});
+
+export const threeEvents = Template.bind({});
+
+threeEvents.args = {
+    Events: scheduleEventsFixtures.threeEvents
+};
+
+export const sixEvents = Template.bind({});
+
+sixEvents.args = {
+    Events: scheduleEventsFixtures.sixEvents
+};
