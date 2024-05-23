@@ -2,6 +2,8 @@ import React from 'react'
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom';
+import { useBackendMutation } from "main/utils/useBackend";
+
 
 function RiderApplicationEditForm({ initialContents, submitAction, email}) {
     const navigate = useNavigate();
@@ -23,8 +25,27 @@ function RiderApplicationEditForm({ initialContents, submitAction, email}) {
         submitAction(data);
     };
     
-    const handleApprove = () => {
+    function cellToAxiosParamsToggleRider(cell) {
+        return {
+            url: "/api/admin/users/toggleRider",
+            method: "POST",
+            params: {
+                id: cell.row.values.id
+            }
+        }
+    }
+
+    // Stryker disable all : hard to test for query caching
+    const toggleRiderMutation = useBackendMutation(
+        cellToAxiosParamsToggleRider,
+        {},
+        ["/api/admin/users"]
+    );
+    // Stryker enable all 
+
+    const handleApprove = async (cell) => {
         const updatedData = { ...initialContents, status: 'accepted' , notes: getValues("notes") };
+        toggleRiderMutation.mutate(cell);
         handleAction(updatedData, -1);
     };
 
