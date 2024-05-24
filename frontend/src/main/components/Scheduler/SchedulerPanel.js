@@ -5,20 +5,21 @@ import SchedulerEvents from "./SchedulerEvent";
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const hours = [
-    '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', 
-    '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM'
+    '', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', 
+    '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', 
+    '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', 
+    '7 PM', '8 PM', '9 PM', '10 PM', '11 PM'
 ];
 
-// const events = [
+// min required data for event object
 //     {
 //         title: "Meeting with Team",
 //         day: "Tuesday",
 //         startTime: "2:00PM",
 //         endTime: "4:00PM"
 //     }
-// ];
 
-export default function SchedulerPanel({ Events = [] }) {
+export default function SchedulerPanel({ Events = [], eventColor="#d1ecf188", borderColor="#bee5eb"}) {
 
     return (
         <Container fluid style={styles.schedulerPanel}>
@@ -33,7 +34,7 @@ export default function SchedulerPanel({ Events = [] }) {
                             {Events
                                 .filter(event => event.day === day)
                                 .map(event => (
-                                <SchedulerEvents key={event.title} event={event} />
+                                <SchedulerEvents key={event.title} event={event} eventColor={eventColor} borderColor={borderColor} />
                             ))}
                         </Card>
                     </Col>
@@ -66,6 +67,7 @@ export default function SchedulerPanel({ Events = [] }) {
 const styles = {
     schedulerPanel: {
         backgroundColor: "#fff",
+        padding: "20px",
     },
     headerRow: {
         textAlign: "center",
