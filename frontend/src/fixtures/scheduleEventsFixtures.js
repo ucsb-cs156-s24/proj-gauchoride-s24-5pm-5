@@ -48,11 +48,11 @@ const scheduleEventsFixtures = {
             day: "Wednesday",
             startTime: "01:30PM",
             endTime: "02:30PM",
-            description: "Monthly update call with the client"
+            description: "Monthly update call with the client update call with the client update call with the client"
         },
         {
             id: 3,
-            title: "Workshop",
+            title: "Workshop Workshop Workshop",
             day: "Friday",
             startTime: "09:00AM",
             endTime: "12:00PM",
@@ -60,9 +60,9 @@ const scheduleEventsFixtures = {
         },
         {
             id: 4,
-            title: "Design Review",
+            title: "Design Review Review Review",
             day: "Tuesday",
-            startTime: "03:00PM",
+            startTime: "03:19PM",
             endTime: "04:00PM",
             description: "Review new designs"
         },

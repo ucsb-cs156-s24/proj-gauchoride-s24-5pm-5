@@ -136,6 +136,9 @@ function App() {
         {
           (hasRole(currentUser, "ROLE_ADMIN")) && <Route exact path="/admin/schedule" element={<SchedulerPage />} />
         }
+        {
+          (hasRole(currentUser, "ROLE_ADMIN")) && <Route exact path="/admin/schedule/:page" element={<SchedulerPage />} />
+        }
         <Route exact path="/privacy.html" />
         <Route exact path="/*" element={<PageNotFound />} />
 

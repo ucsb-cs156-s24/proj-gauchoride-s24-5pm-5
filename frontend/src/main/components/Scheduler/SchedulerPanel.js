@@ -42,7 +42,7 @@ export default function SchedulerPanel({ Events = [], eventColor="#d1ecf188", bo
             </Row>
             <Row>
                 <Col style={styles.timeColumn}>
-                    <div style={{...styles.timeSlot, height: "30px", border: "0"}}></div>
+                    <div style={{...styles.timeSlot, height: "20px", border: "0"}}></div>
                     {hours.map((hour, index) => (
                         <div key={index} style={{...styles.timeSlot, border: "0"}}>
                             <span style={styles.hourLabel}>{hour}</span>
@@ -51,7 +51,7 @@ export default function SchedulerPanel({ Events = [], eventColor="#d1ecf188", bo
                 </Col>
                 {daysOfWeek.map(day => (
                     <Col key={day} style={styles.dayColumn}>
-                        <div style={{...styles.timeSlot, height: "30px"}}></div>
+                        <div style={{...styles.timeSlot, height: "20px"}}></div>
                         {hours.slice(0, hours.length-1).map(hour => (
                             <div key={hour} style={styles.timeSlot}>
                                 <Card style={styles.eventCard}/>
@@ -90,7 +90,7 @@ const styles = {
         fontWeight: "bold"
     },
     timeSlot: {
-        height: "60px", /* Full time slot height */
+        height: "40px", /* Full time slot height */
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -105,7 +105,7 @@ const styles = {
         borderRadius: "0",
     },
     hourLabel: {
-        height: "30px", /* Half of the full time slot height */
+        height: "20px", /* Half of the full time slot height */
         display: "flex",
         alignItems: "center",
         justifyContent: "right",

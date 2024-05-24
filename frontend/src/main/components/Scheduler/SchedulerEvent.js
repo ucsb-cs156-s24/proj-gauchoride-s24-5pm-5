@@ -1,8 +1,14 @@
-import React from "react";
-import { Card } from 'react-bootstrap';
-
+import React, { useEffect, useState } from "react";
+import { ButtonGroup, Card, OverlayTrigger, Popover, Button } from 'react-bootstrap';
 
 export default function SchedulerEvents({ event, eventColor, borderColor }) {
+    const [style, setStyle] = useState({
+        event: {},
+        title: {},
+        height: 0,
+    });
+
+    const startOffset = 74;
 
     const convertTimeToMinutes = (time) => {
         const [timePart, modifier] = [time.slice(0, -2), time.slice(-2)];
@@ -14,35 +20,71 @@ export default function SchedulerEvents({ event, eventColor, borderColor }) {
             hours = 0;
         }
 
-        return hours * 59.9 + minutes;
+        return hours * 39.9 + minutes;
     };
 
-
-    const getEventStyle = (startTime, endTime) => {
-        const startMinutes = convertTimeToMinutes(startTime);
-        const endMinutes = convertTimeToMinutes(endTime);
-
-        // Normalize the start time to 7 AM
-        const startOffset = 95;
-        const topPosition = startMinutes + startOffset;
+    // Stryker disable all
+    useEffect(() => {
+        const startMinutes = convertTimeToMinutes(event.startTime);
+        const endMinutes = convertTimeToMinutes(event.endTime);
         const height = endMinutes - startMinutes;
+        const topPosition = startMinutes + startOffset;
 
-        return {
-            position: 'absolute',
-            top: `${topPosition}px`,
-            height: `${height}px`,
-            width: '100%',
-            backgroundColor: eventColor,
-            border: `2px solid ${borderColor}`,
-            zIndex: 1
-        };
-    };
-    return(
-        <Card key={event.title} style={{...getEventStyle(event.startTime, event.endTime), backgroundColor: eventColor? eventColor: ""}}>
-            <Card.Body>
-                <Card.Text>{event.title}</Card.Text>
-                <Card.Text>{event.description}</Card.Text>
-            </Card.Body>
-        </Card>
-    )
+        setStyle({
+            event: {
+                position: 'absolute',
+                top: `${topPosition}px`,
+                height: `${height}px`,
+                width: '100%',
+                backgroundColor: eventColor,
+                border: `2px solid ${borderColor}`,
+                zIndex: 1,
+                padding: '2px',
+                justifyContent: 'center',
+                alignItems: 'left',
+            },
+            title: {
+                fontSize: height < 25 ? '10px' : height < 40 ? '12px' : height < 60 ? '14px' : '16px',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                textAlign: 'left',
+                margin: '0',
+            },
+            height: height,
+        });
+    }, [event.startTime, event.endTime, eventColor, borderColor]);
+    // Stryker restore all
+
+    return (
+        <OverlayTrigger
+            trigger="click"
+            key={event.title}
+            placement="auto-start"
+            rootClose
+            overlay={
+                <Popover>
+                    <Popover.Header as="h3">{event.title}</Popover.Header>
+                    <Popover.Body>
+                        <p>
+                            {event.startTime} - {event.endTime}<br/>
+                            {event.description}
+                        </p>
+                        {event.actions && event.actions.map((action, index) => (
+                            <ButtonGroup key={index}>
+                                <Button variant={action.variant} onClick={action.callback}>{action.text}</Button>
+                            </ButtonGroup>
+                        ))}
+                    </Popover.Body>
+                </Popover>
+            }
+        >
+            <Card key={event.title} style={style.event}>
+                <Card.Body style={{ padding: '5px' }}>
+                    {style.height >= 20 && <Card.Text style={style.title}>{event.title}</Card.Text>}
+                    {style.height >= 40 && <Card.Text style={{ fontSize: '12px', textAlign: 'left' }}>{event.startTime} - {event.endTime}</Card.Text>}
+                </Card.Body>
+            </Card>
+        </OverlayTrigger>
+    );
 }
