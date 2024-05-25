@@ -12,6 +12,7 @@ import { cellToAxiosParamsDelete as shiftCellToAxiosParamsDelete, onDeleteSucces
 import { cellToAxiosParamsDelete as RideCellToAxiosParamsDelete, onDeleteSuccess as RideOnDeleteSuccess } from "main/utils/rideUtils"
 import { cellToAxiosParamsDelete as driverAvailabilityCellToAxiosParamsDelete, onDeleteSuccess as driverAvailabilityOnDeleteSuccess } from "main/utils/driverAvailabilityUtils"
 import { useBackendMutation } from "main/utils/useBackend";
+import { fillAllDatabases, fillDriverAvailabilityDatabase, fillRideRequestDatabase, fillShiftDatabase } from "main/utils/fillSchedulerUtil";
 
 export default function SchedulerPage() {
     const { page } = useParams();
@@ -185,6 +186,12 @@ export default function SchedulerPage() {
                     <Button onClick={() => {navigate('/admin/schedule/rides')}}>Ride Requests</Button>
 
                     <Button onClick={() => {navigate('/admin/schedule/driver')}}>Driver Availability</Button>
+                </ButtonGroup>
+                <ButtonGroup>
+                    <Button onClick={async () => {await fillShiftDatabase(); navigate(0)}}>Fill Shifts</Button>
+                    <Button onClick={async () => {await fillRideRequestDatabase(); navigate(0)}}>Fill Rides</Button>
+                    <Button onClick={async () => {await fillDriverAvailabilityDatabase(); navigate(0)}}>Fill Driver Availability</Button>
+                    <Button onClick={async () => {await fillAllDatabases(); navigate(0)}}>Fill All</Button>
                 </ButtonGroup>
                 {page && 
                     <Button
