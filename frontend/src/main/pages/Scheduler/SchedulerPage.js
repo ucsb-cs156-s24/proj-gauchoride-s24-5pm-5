@@ -85,7 +85,7 @@ export default function SchedulerPage() {
     // Stryker restore all 
 
     // Stryker disable next-line all : TODO try to make a good test for this
-    const deleteRideCallback = async (cell) => { RideDeleteMutation.mutate(cell); }
+    const deleteRideCallback = async (ride) => { RideDeleteMutation.mutate({row: {values: {id: ride.id}}}); }
 
 
 
@@ -100,10 +100,6 @@ export default function SchedulerPage() {
                 // Stryker restore all
             },
         );
-    
-    const editDriverCallback = (driver) => {
-        navigate(`/availability/edit/${driver.id}`)
-    }
 
     const reviewDriverCallback = (driver) => {
         navigate(`/admin/availability/review/${driver.id}`)
@@ -119,7 +115,7 @@ export default function SchedulerPage() {
     // Stryker restore all 
 
     // Stryker disable next-line all : TODO try to make a good test for this
-    const deleteDriverCallback = async (cell) => { DriverDeleteMutation.mutate(cell); }
+    const deleteDriverCallback = async (driver) => { DriverDeleteMutation.mutate({row: {values: {id: driver.id}}}); }
 
 
 
@@ -168,8 +164,7 @@ export default function SchedulerPage() {
                 day: availability.day,
                 startTime: availability.startTime,
                 endTime: availability.endTime,
-                actions: [
-                    hasRole(currentUser, "ROLE_ADMIN") && { text: "Edit", variant: "primary", callback: () => editDriverCallback(availability) },
+                actions: [  
                     hasRole(currentUser, "ROLE_ADMIN") && { text: "Delete", variant: "danger", callback: () => {deleteDriverCallback(availability); navigate(0)} },
                     hasRole(currentUser, "ROLE_ADMIN") && { text: "Review", variant: "success", callback: () => reviewDriverCallback(availability) }
                 ].filter(Boolean) // remove undefined values
