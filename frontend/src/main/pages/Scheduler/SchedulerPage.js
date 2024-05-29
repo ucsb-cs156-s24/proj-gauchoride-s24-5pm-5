@@ -7,12 +7,12 @@ import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import { Button, ButtonGroup, Stack } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-import { useBackend } from "main/utils/useBackend";
+import { useBackend, useBackendMutation } from "main/utils/useBackend";
 import { useCurrentUser , hasRole} from 'main/utils/currentUser'
+
 import { cellToAxiosParamsDelete as shiftCellToAxiosParamsDelete, onDeleteSuccess as shiftOnDeleteSuccess } from "main/utils/shiftUtils"
 import { cellToAxiosParamsDelete as RideCellToAxiosParamsDelete, onDeleteSuccess as RideOnDeleteSuccess } from "main/utils/rideUtils"
 import { cellToAxiosParamsDelete as driverAvailabilityCellToAxiosParamsDelete, onDeleteSuccess as driverAvailabilityOnDeleteSuccess } from "main/utils/driverAvailabilityUtils"
-import { useBackendMutation } from "main/utils/useBackend";
 
 export default function SchedulerPage() {
 
