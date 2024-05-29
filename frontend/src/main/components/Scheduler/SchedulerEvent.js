@@ -8,7 +8,7 @@ export default function SchedulerEvents({ event, eventColor, borderColor }) {
         height: 0,
     });
 
-    const startOffset = 74;
+    const startOffset = 94;
 
     const convertTimeToMinutes = (time) => {
         const [timePart, modifier] = [time.slice(0, -2), time.slice(-2)];
@@ -20,7 +20,7 @@ export default function SchedulerEvents({ event, eventColor, borderColor }) {
             hours = 0;
         }
 
-        return hours * 39.9 + minutes;
+        return hours * 60 + minutes;
     };
 
     // Stryker disable all
