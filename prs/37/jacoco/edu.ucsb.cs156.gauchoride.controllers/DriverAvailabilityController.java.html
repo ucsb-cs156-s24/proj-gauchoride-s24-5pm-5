@@ -3,6 +3,7 @@
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.server.ResponseStatusException;
 
 import edu.ucsb.cs156.gauchoride.entities.User;
 import edu.ucsb.cs156.gauchoride.models.CurrentUser;
@@ -31,8 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = &quot;DriverAvailability&quot;)
 @RequestMapping(&quot;/api/driverAvailability&quot;)
 @RestController
-<span class="fc" id="L34">@Slf4j</span>
-<span class="fc" id="L35">public class DriverAvailabilityController extends ApiController{</span>
+<span class="fc" id="L36">@Slf4j</span>
+<span class="fc" id="L37">public class DriverAvailabilityController extends ApiController{</span>
     
     @Autowired
     DriverAvailabilityRepository driverAvailabilityRepository;
@@ -49,20 +51,20 @@ import lombok.extern.slf4j.Slf4j;
             throws JsonProcessingException {
 
 
-<span class="fc" id="L52">        log.info(&quot;notes={}&quot;, notes);</span>
+<span class="fc" id="L54">        log.info(&quot;notes={}&quot;, notes);</span>
 
-<span class="fc" id="L54">        Long UserId = getCurrentUser().getUser().getId();</span>
+<span class="fc" id="L56">        Long UserId = getCurrentUser().getUser().getId();</span>
 
-<span class="fc" id="L56">        DriverAvailability driverAvailability = new DriverAvailability();</span>
-<span class="fc" id="L57">        driverAvailability.setDriverId(UserId);</span>
-<span class="fc" id="L58">        driverAvailability.setDay(day);</span>
-<span class="fc" id="L59">        driverAvailability.setStartTime(startTime);</span>
-<span class="fc" id="L60">        driverAvailability.setEndTime(endTime);</span>
-<span class="fc" id="L61">        driverAvailability.setNotes(notes);</span>
+<span class="fc" id="L58">        DriverAvailability driverAvailability = new DriverAvailability();</span>
+<span class="fc" id="L59">        driverAvailability.setDriverId(UserId);</span>
+<span class="fc" id="L60">        driverAvailability.setDay(day);</span>
+<span class="fc" id="L61">        driverAvailability.setStartTime(startTime);</span>
+<span class="fc" id="L62">        driverAvailability.setEndTime(endTime);</span>
+<span class="fc" id="L63">        driverAvailability.setNotes(notes);</span>
 
-<span class="fc" id="L63">        DriverAvailability savedDriverAvailability = driverAvailabilityRepository.save(driverAvailability);</span>
+<span class="fc" id="L65">        DriverAvailability savedDriverAvailability = driverAvailabilityRepository.save(driverAvailability);</span>
 
-<span class="fc" id="L65">        return savedDriverAvailability;</span>
+<span class="fc" id="L67">        return savedDriverAvailability;</span>
     }
 
     //GET all availability submissions for the current user.
@@ -71,8 +73,8 @@ import lombok.extern.slf4j.Slf4j;
     @GetMapping(&quot;&quot;)
     public Iterable&lt;DriverAvailability&gt; allApplications() {
         Iterable&lt;DriverAvailability&gt; availabilities;
-<span class="fc" id="L74">        availabilities = driverAvailabilityRepository.findAllByDriverId(getCurrentUser().getUser().getId());</span>
-<span class="fc" id="L75">        return availabilities;</span>
+<span class="fc" id="L76">        availabilities = driverAvailabilityRepository.findAllByDriverId(getCurrentUser().getUser().getId());</span>
+<span class="fc" id="L77">        return availabilities;</span>
     }
 
     //GET a single availability by ID if owned by the current user
@@ -84,14 +86,14 @@ import lombok.extern.slf4j.Slf4j;
                     required = true)  
                     @RequestParam Long id) 
     {
-<span class="fc" id="L87">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
-<span class="fc" id="L88">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
+<span class="fc" id="L89">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
+<span class="fc" id="L90">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
 
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (availability.getDriverId() != getCurrentUser().getUser().getId()){</span>
-<span class="fc" id="L91">            throw new EntityNotFoundException(DriverAvailability.class, id);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (availability.getDriverId() != getCurrentUser().getUser().getId()){</span>
+<span class="fc" id="L93">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;You are not authorized to access this resource.&quot;);</span>
         }
         
-<span class="fc" id="L94">        return availability;</span>
+<span class="fc" id="L96">        return availability;</span>
     }
 
     //Edits an availability if owned by current user
@@ -104,20 +106,20 @@ import lombok.extern.slf4j.Slf4j;
                             @RequestParam Long id,
                             @RequestBody @Valid DriverAvailability incoming)
     {
-<span class="fc" id="L107">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
-<span class="fc" id="L108">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
+<span class="fc" id="L109">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
+<span class="fc" id="L110">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
 
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (availability.getDriverId() != getCurrentUser().getUser().getId()) {</span>
-<span class="fc" id="L111">            throw new EntityNotFoundException(DriverAvailability.class, id);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (availability.getDriverId() != getCurrentUser().getUser().getId()) {</span>
+<span class="fc" id="L113">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;You are not authorized to access this resource.&quot;);</span>
         }
 
-<span class="fc" id="L114">        availability.setDay(incoming.getDay());</span>
-<span class="fc" id="L115">        availability.setStartTime(incoming.getStartTime());</span>
-<span class="fc" id="L116">        availability.setEndTime(incoming.getEndTime());</span>
-<span class="fc" id="L117">        availability.setNotes(incoming.getNotes());</span>
+<span class="fc" id="L116">        availability.setDay(incoming.getDay());</span>
+<span class="fc" id="L117">        availability.setStartTime(incoming.getStartTime());</span>
+<span class="fc" id="L118">        availability.setEndTime(incoming.getEndTime());</span>
+<span class="fc" id="L119">        availability.setNotes(incoming.getNotes());</span>
 
-<span class="fc" id="L119">        driverAvailabilityRepository.save(availability);</span>
-<span class="fc" id="L120">        return ResponseEntity.ok(availability);</span>
+<span class="fc" id="L121">        driverAvailabilityRepository.save(availability);</span>
+<span class="fc" id="L122">        return ResponseEntity.ok(availability);</span>
 
     }
 
@@ -127,15 +129,15 @@ import lombok.extern.slf4j.Slf4j;
     @DeleteMapping(&quot;&quot;)
     public Object deleteDriverAvailability(
             @Parameter(name=&quot;id&quot;) @RequestParam Long id) {
-<span class="fc" id="L130">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
-<span class="fc" id="L131">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
+<span class="fc" id="L132">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
+<span class="fc" id="L133">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
 
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (availability.getDriverId() != getCurrentUser().getUser().getId()) {</span>
-<span class="fc" id="L134">            throw new EntityNotFoundException(DriverAvailability.class, id);</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (availability.getDriverId() != getCurrentUser().getUser().getId()) {</span>
+<span class="fc" id="L136">            throw new ResponseStatusException(HttpStatus.FORBIDDEN, &quot;You are not authorized to access this resource.&quot;);</span>
         }
 
-<span class="fc" id="L137">        driverAvailabilityRepository.delete(availability);</span>
-<span class="fc" id="L138">        return genericMessage(&quot;DriverAvailability with id %s deleted&quot;.formatted(id));</span>
+<span class="fc" id="L139">        driverAvailabilityRepository.delete(availability);</span>
+<span class="fc" id="L140">        return genericMessage(&quot;DriverAvailability with id %s deleted&quot;.formatted(id));</span>
     }
 
     //Lets Admin GET a single availability by ID
@@ -147,10 +149,9 @@ import lombok.extern.slf4j.Slf4j;
                     required = true)  
                     @RequestParam Long id) 
     {
-        DriverAvailability availability;
-<span class="fc" id="L151">        availability = driverAvailabilityRepository.findById(id)</span>
-<span class="fc" id="L152">                    .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
-<span class="fc" id="L153">        return availability;</span>
+<span class="fc" id="L152">        DriverAvailability availability = driverAvailabilityRepository.findById(id)</span>
+<span class="fc" id="L153">                .orElseThrow(() -&gt; new EntityNotFoundException(DriverAvailability.class, id));</span>
+<span class="fc" id="L154">        return availability;</span>
     }
 
     //Lets admins get all driver availabilties
@@ -158,8 +159,8 @@ import lombok.extern.slf4j.Slf4j;
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
     @GetMapping(&quot;/admin/all&quot;)
     public Iterable&lt;DriverAvailability&gt; allDriverAvailabilities() {
-<span class="fc" id="L161">        Iterable&lt;DriverAvailability&gt; availabilities = driverAvailabilityRepository.findAll();</span>
-<span class="fc" id="L162">        return availabilities;</span>
+<span class="fc" id="L162">        Iterable&lt;DriverAvailability&gt; availabilities = driverAvailabilityRepository.findAll();</span>
+<span class="fc" id="L163">        return availabilities;</span>
     }
 
 }
