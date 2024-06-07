@@ -1,4 +1,4 @@
-import { screen, render, waitFor} from "@testing-library/react";
+import { screen, render, waitFor, fireEvent} from "@testing-library/react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
@@ -145,6 +145,54 @@ describe("AppNavbar tests", () => {
         await waitFor(() => expect(getByText("Welcome, Phillip Conrad")).toBeInTheDocument());
         const shiftMenu = getByTestId("appnavbar-shift-dropdown");
         expect(shiftMenu).toBeInTheDocument();        
+    });
+
+    test("driver availability not there for admin only user", async () => {
+
+        const currentUser = currentUserFixtures.adminOnly;
+        const doLogin = jest.fn();
+
+        const { getByText , getByTestId } = render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+                    </MemoryRouter>
+            </QueryClientProvider>
+        );
+        
+        await waitFor(() => expect(getByText("Welcome, Phill Conrad")).toBeInTheDocument());
+        const shiftMenu = getByTestId("appnavbar-shift-dropdown");
+        expect(shiftMenu).toBeInTheDocument();
+
+        const aElement = shiftMenu.querySelector("a");
+        expect(aElement).toBeInTheDocument();
+        aElement?.click();
+        await expect(getByTestId(/appnavbar-shift-dropdown-shifts/)).toBeInTheDocument();
+        expect(screen.queryByTestId(/appnavbar-availability-dropdown-availabilities/)).not.toBeInTheDocument();
+    });
+
+    test("driver availability there for driver users", async () => {
+
+        const currentUser = currentUserFixtures.driverOnly;
+        const doLogin = jest.fn();
+
+        const { getByText , getByTestId } = render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+                    </MemoryRouter>
+            </QueryClientProvider>
+        );
+        
+        await waitFor(() => expect(getByText("Welcome, Phillip Conrad")).toBeInTheDocument());
+        const shiftMenu = getByTestId("appnavbar-shift-dropdown");
+        expect(shiftMenu).toBeInTheDocument();        
+
+        const aElement = shiftMenu.querySelector("a");
+        expect(aElement).toBeInTheDocument();
+        aElement?.click();
+        await expect(getByTestId(/appnavbar-shift-dropdown-shifts/)).toBeInTheDocument();
+        expect(getByTestId(/appnavbar-availability-dropdown-availabilities/)).toBeInTheDocument();
     });
 
     test("renders driver page link for driver", async () => {
@@ -754,6 +802,23 @@ describe("AppNavbar tests", () => {
         );
         
         await waitFor(() => expect(getByText("Welcome, Phillip Conrad")).toBeInTheDocument());
+        const applyLink = screen.queryByTestId("appnavbar-applytoberider");
+        expect(applyLink).not.toBeInTheDocument();
+    });
+
+    test("Apply to be a rider should not appear for user not logged in", async () => {
+        const currentUser = currentUserFixtures.notLoggedIn;
+        const doLogin = jest.fn();
+
+        const { getByText } = render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+        
+        await waitFor(() => expect(getByText("Log In")).toBeInTheDocument());
         const applyLink = screen.queryByTestId("appnavbar-applytoberider");
         expect(applyLink).not.toBeInTheDocument();
     });
